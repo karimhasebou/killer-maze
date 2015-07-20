@@ -4,15 +4,17 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.image.*;
 
-public abstract class Character implements Drawable{
+public abstract class Character implements WeaponHolder{
 	private Image[] sprite;
 	private Scene.Location gridPosition; // grid based
 	private Scene.Location pixelPosition; // pixel based
 	private Scene scene;
+	private Weapon weapon;
+
 	private int tileSize;
 	private int spriteSelector;
-	private boolean isMoving = false;
 	private int transitionSpeed;
+	private boolean isMoving = false;
 
 	public Character(Image sprite,Scene.Location gridPosition,Scene scene,int transitionSpeed){
 		int spritesPerRow = ((BufferedImage)sprite).getWidth()/SPRITE_SIZE;
@@ -146,6 +148,22 @@ public abstract class Character implements Drawable{
 
 	public Scene getScene(){
 		return scene;
+	}
+
+	public Direction getFacingDirection(){
+		switch(spriteSelector/3){
+			case 0:
+				return Direction.DOWN;
+			case 1:
+				return Direction.LEFT;
+			case 2:
+				return Direction.RIGHT;
+			default:
+				return Direction.UP;
+		}
+	}
+	public void notifyAmmoFinished(){
+		weapon = null;
 	}
 
 	private final static int SPRITE_SIZE = 32;

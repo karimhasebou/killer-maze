@@ -55,15 +55,15 @@ abstract class Weapon implements Drawable{
 
 	public void draw(Graphics g){
 		if(showAsPickup){
-			g.drawImage(weaponIcon,tileSize*loc.x,tileSize*loc.y,tileSize,tileSize);
+			g.drawImage(weaponIcon,tileSize*pickupLocation.x,tileSize*pickupLocation.y,tileSize,tileSize,null);
 		}else{
-			for(Drawable bullet : bulletShot)
-				bulletShot.draw(g);
+			for(Ammunition bullet : ammunition)
+				bullet.draw(g);
 		}
 	}
 
 	public void update(){
-		for(Drawable bullet : bulletShot)
+		for(Ammunition bullet : ammunition)
 			bullet.update();
 	}
 
@@ -72,20 +72,16 @@ abstract class Weapon implements Drawable{
 	public void fire(){
 		if(ammo <= 0)
 			return;
-		ammunition.add(new Ammunition(scene,WeaponHolder.getGridPosition(),WeaponHolder.getFacingDirection()));
+		ammunition.add(new Ammunition(weaponHolder.getGridPosition(),weaponHolder.getFacingDirection(),bulletTexture));
 		ammo--;
 	}
-
-	enum Type{
-		RPG,GUN,FIRE
-	};
 
 	public class Ammunition{
 		public Scene.Location loc;
 		public Direction dir;
 		public BufferedImage bulletTexture;
 
-		public Ammunition(Scene.Location loc,Direction dir,BufferedIbullet bulletTexture){
+		public Ammunition(Scene.Location loc,Direction dir,BufferedImage bulletTexture){
 			this.loc = loc;
 			this.dir = dir;
 			this.bulletTexture = bulletTexture;
@@ -93,23 +89,26 @@ abstract class Weapon implements Drawable{
 
 		public void update(){
 			switch(dir){
-				case Direction.LEFT:
+				case LEFT:
 					loc.x--;
 					break;
-				case Direction.RIGHT:
+				case RIGHT:
 					loc.x++;
 					break;
-				case Direction.UP:
+				case UP:
 					loc.y--;
 					break;
-				case Direction.DOWN:
-					loc.y++:
+				case DOWN:
+					loc.y++;
 					break;
 			}
 		}
-	}
 
-	enum Type{
-		RPG,GUN;
-	};
+		public void draw(Graphics g){
+			g.drawImage(bulletTexture,loc.x*tileSize,loc.y*tileSize,tileSize,tileSize,null);
+		}
+	}
+	public Scene.Location getGridPosition(){
+		return pickupLocation;
+	}
 }

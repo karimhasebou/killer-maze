@@ -47,7 +47,7 @@ public class Scene extends JPanel{
 
 			while(mapContent.hasNextLine()){
 				String[] settings = mapContent.nextLine().split("\\s+");
-				
+
 				if(settings[0].equals(MAP_TEXTURES))
 					loadMapTextures(settings);
 				else if(settings[0].equals(MAP_OBJECTS))
@@ -121,8 +121,8 @@ public class Scene extends JPanel{
 
 	public boolean canMove(Location loc){
 		return loc.x >= 0 && loc.x < xTileCount &&
-				loc.y >= 0 && loc.y < yTileCount &&  
-				(grid[loc.y][loc.x] < wallRange[0] 
+				loc.y >= 0 && loc.y < yTileCount &&
+				(grid[loc.y][loc.x] < wallRange[0]
 				|| grid[loc.y][loc.x] > wallRange[1]);
 	}
 
@@ -170,7 +170,7 @@ public class Scene extends JPanel{
 					System.out.println(e);
 					System.exit(-1);
 				}
-				
+
 			}
 		}).start();
 	}
@@ -180,15 +180,15 @@ public class Scene extends JPanel{
 		if(from.equals(to))
 			return null;
 
-		ArrayList<ArrayList<Location>> paths = 
+		ArrayList<ArrayList<Location>> paths =
 			new ArrayList<ArrayList<Location>>();
-		
+
 		ArrayList<Location> path =
 			new ArrayList<Location>();
 			path.add(from);
 		paths.add(path);
 
-		boolean[][] visited = 
+		boolean[][] visited =
 			new boolean[yTileCount][xTileCount];
 
 		int[] dx = {0,0,-1,1};
@@ -214,7 +214,7 @@ public class Scene extends JPanel{
 					tilesVisited--;
 
 					@SuppressWarnings("unchecked") // type of cloned object already known
-					ArrayList<Location> newPath = 
+					ArrayList<Location> newPath =
 						(ArrayList<Location>) paths.get(0).clone();
 					Location newLocation = new Location(x,y);
 					newPath.add(newLocation);
@@ -235,7 +235,7 @@ public class Scene extends JPanel{
 
 	private void actOnObjectInCollision(){
 		int i = isCollidinWithObject();
-		
+
 		if(i == -1)
 			return;
 		Drawable.Type objectType = drawables.get(i).getType();
@@ -258,6 +258,10 @@ public class Scene extends JPanel{
 
 	public float getResolutionMultiplier(){
 		return resolutionMultiplier;
+	}
+
+	public BufferedImage getTexture(final String texture){
+		return textures.get(texture);
 	}
 
 	final private static String MAP_TEXTURES = "MAP_TEXTURES";
