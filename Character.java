@@ -162,6 +162,15 @@ public abstract class Character implements WeaponHolder{
 				return Direction.UP;
 		}
 	}
+	public void setWeapon(Weapon weapon){
+		this.weapon = weapon;
+	}
+
+	public void fireWeapon(){
+		if(weapon != null)
+			weapon.fire();
+	}
+
 	public void notifyAmmoFinished(){
 		weapon = null;
 	}

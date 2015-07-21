@@ -11,7 +11,7 @@ class RPG extends Weapon{
     private final static int DEFAULT_AMMO = 2;
     private final static String WEAPON_TEXTURE = "RPG_PICKUP";
     private final static String BULLET_TEXTURE = "ROCKET";
-    private final static int PROJECTILE_SPEED = 10;
+    private final static int PROJECTILE_SPEED = 1;
 
     public RPG(Scene scene,Scene.Location pickupLocation,boolean showAsPickup){
         super(scene,pickupLocation,showAsPickup);

@@ -9,5 +9,5 @@ interface Drawable{
 	void update();
 	Type getType();
 
-	enum Type {ENEMY,PLAYER,PICKUP,COIN,RPG,GUN,FIRE};
+	enum Type {ENEMY,PLAYER,PICKUP,COIN,RPG,GUN,FIRE,STRAIGHT_BULLET};
 }

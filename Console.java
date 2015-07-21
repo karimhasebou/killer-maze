@@ -9,7 +9,7 @@ public class Console extends JPanel implements KeyListener{
 	private Window window;
 	private JTextArea display;
 	private JTextField input;
-	 
+
 	public Console(Window window){
 		super(new BorderLayout());
 		this.window = window;
@@ -24,7 +24,7 @@ public class Console extends JPanel implements KeyListener{
 
 		input.setFocusable(true);
 		input.addKeyListener(this);
-		
+
 		Color darkPurple = new Color(63,25,44);
 		input.setBackground(darkPurple);
 		display.setBackground(darkPurple);
@@ -58,7 +58,7 @@ public class Console extends JPanel implements KeyListener{
 	}
 
 	public void keyReleased(KeyEvent e){
-	
+
 	}
 
 	public void parseInput(String input){
@@ -73,5 +73,5 @@ public class Console extends JPanel implements KeyListener{
 			println("Invalid command");
 	}
 
-	private final static String OPEN = "open"; 
+	private final static String OPEN = "open";
 }

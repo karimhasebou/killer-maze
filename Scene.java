@@ -10,9 +10,13 @@ import java.awt.*;
 import javax.sound.sampled.*;
 import java.io.*;
 import javax.imageio.*;
+import puzzle2.Weapon.Ammunition;
+
 
 public class Scene extends JPanel{
 	private ArrayList<Drawable> drawables;
+	private ArrayList<Ammunition> weaponFire;
+
 	private HashMap<String,BufferedImage> textures;
 
 	private int tileSize;
@@ -28,6 +32,7 @@ public class Scene extends JPanel{
 		setFocusable(true);
 
 		drawables = new ArrayList<Drawable>();
+		weaponFire = new ArrayList<Ammunition>();
 		textures = new HashMap<String,BufferedImage>();
 
 		resolutionMultiplier = sceneShortestLength/500.0f;
@@ -60,6 +65,11 @@ public class Scene extends JPanel{
 					wallRange = new int[2];
 					wallRange[0] = Integer.parseInt(settings[1]);
 					wallRange[1] = Integer.parseInt(settings[2]);
+				}else if(settings[0].equals(RPG)){
+					int x = Integer.parseInt(settings[1]);
+					int y = Integer.parseInt(settings[2]);
+					Location loc = new Location(Integer.parseInt(settings[1]),Integer.parseInt(settings[2]));
+					drawables.add(new RPG(this,loc,true));
 				}
 			}
 		}catch(IOException e){
@@ -128,13 +138,14 @@ public class Scene extends JPanel{
 
 	@Override
 	public void paintComponent(Graphics g){
-		super.paintComponent(g);
 		for(int y = 0; y < yTileCount;y++)
 			for(int x = 0; x < xTileCount;x++)
 				g.drawImage(textures.get(grid[y][x]+""),
 					x*tileSize,y*tileSize,tileSize,tileSize,null);
 		for(Drawable object : drawables)
 			object.draw(g);
+		for(Ammunition ammo : weaponFire)
+			ammo.draw(g);
 		player.draw(g);
 	}
 
@@ -161,9 +172,12 @@ public class Scene extends JPanel{
 					while(gameOn){
 						for(Drawable object : drawables)
 							object.update();
+						for(Ammunition bullet : weaponFire)
+							bullet.update();
 						player.update();
-						actOnObjectInCollision();
 						repaint();
+						actOnObjectInCollision();
+						checkCollisions();
 						Thread.sleep(32);
 					}
 				}catch(InterruptedException e){
@@ -234,7 +248,7 @@ public class Scene extends JPanel{
 	}
 
 	private void actOnObjectInCollision(){
-		int i = isCollidinWithObject();
+		int i = isObjectCollidingWithEnemy();
 
 		if(i == -1)
 			return;
@@ -242,12 +256,20 @@ public class Scene extends JPanel{
 
 		if(objectType == Drawable.Type.ENEMY)
 			gameOn = false;
-		if(objectType == Drawable.Type.COIN)
+		else if(objectType == Drawable.Type.COIN)
 			drawables.remove(i);
+		else if(objectType == Drawable.Type.RPG){
+			@SuppressWarnings("unchecked")
+			Weapon weapon = (Weapon) drawables.get(i);
+			weapon.showWeaponOnGrid(false);
+			weapon.setWeaponHolder(player);
+			player.setWeapon(weapon);
+		}
+
 	}
 	/**@return returns index of object player is in collision with, returns -1 if no collision is present
 	*/
-	private int isCollidinWithObject(){
+	private int isObjectCollidingWithEnemy(){
 		Location playerLocation = player.getGridPosition();
 		for(int i = drawables.size()-1; i >= 0;i--)
 			if(drawables.get(i).getGridPosition().equals(playerLocation))
@@ -255,6 +277,40 @@ public class Scene extends JPanel{
 		return -1;
 	}
 
+	public void addWeaponFire(Ammunition ammo){
+		weaponFire.add(ammo);
+	}
+
+	public void checkCollisions(){
+	missle:	for(int i = 0; i < weaponFire.size();){
+			Location loc = weaponFire.get(i).getGridPosition();
+			if(loc.x < 0 || loc.x > xTileCount  || // missile out of bounds remove
+				loc.y < 0 || loc.y > yTileCount){
+				weaponFire.remove(i);
+				continue;
+			}else if((grid[loc.y][loc.x] >= wallRange[0]
+				&& grid[loc.y][loc.x] <= wallRange[1])){
+				grid[loc.y][loc.x] = wallRange[1]+1;
+				weaponFire.remove(i);
+				continue;
+			}else if(player.getGridPosition().equals(loc)){
+				/*gameOn = false; // missile hit player
+				continue; */
+			}
+			for(int j = drawables.size()-1;j >= 0; j--){ // enemy - missile collision
+				Drawable obj = drawables.get(j);
+				if(obj.getType() != Drawable.Type.ENEMY)
+					continue;
+				Location enemyLoc = obj.getGridPosition();
+				if(enemyLoc.equals(loc)){
+					weaponFire.remove(i);
+					drawables.remove(j);
+					continue missle;
+				}
+			}
+			i++;
+		}
+	}
 
 	public float getResolutionMultiplier(){
 		return resolutionMultiplier;

@@ -9,16 +9,16 @@ class Player extends Character implements KeyListener{
 	public Player(Image sprite,Scene.Location gridPosition,Scene scene){
 		super(sprite,gridPosition,scene,TRANSITION_SPEED);
 	}
-	
+
 	public Type getType(){
 		return Type.PLAYER;
 	}
 
 	public void keyTyped(KeyEvent e) {
-       
+
     }
 
-    
+
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
@@ -30,9 +30,11 @@ class Player extends Character implements KeyListener{
             moveRight();
         else if(keyCode == KeyEvent.VK_LEFT)
             moveLeft();
+		else if(keyCode == KeyEvent.VK_SPACE)
+			fireWeapon();
     }
 
-    
+
     public void keyReleased(KeyEvent e) {
     }
 
