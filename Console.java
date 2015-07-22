@@ -7,8 +7,8 @@ import java.awt.event.*;
 
 public class Console extends JPanel implements KeyListener{
 	private Window window;
-	private JTextArea display;
-	private JTextField input;
+	private static JTextArea display;
+	private static JTextField input;
 
 	public Console(Window window){
 		super(new BorderLayout());
@@ -40,7 +40,7 @@ public class Console extends JPanel implements KeyListener{
 
 	/**@param input text to  display on console
 	*/
-	public void println(String input){
+	public static void println(String input){
 		display.append(input+"\n");
 	}
 

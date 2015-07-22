@@ -27,7 +27,7 @@ abstract class Weapon implements Drawable{
 
 	public void setBulletProperties(BufferedImage bulletTexture,int bulletSpeed){
 		this.bulletTexture = bulletTexture;
-		this.projectileSpeed = projectileSpeed;
+		this.projectileSpeed = bulletSpeed;
 	}
 
 	public void setWeaponProperties(BufferedImage weaponIcon,int ammo){
@@ -66,44 +66,47 @@ abstract class Weapon implements Drawable{
 		if(ammo <= 0)
 			return;
 		scene.addWeaponFire(new Ammunition(weaponHolder.getGridPosition(),weaponHolder.getFacingDirection(),bulletTexture));
-		ammo--;
+		if(--ammo == 0)
+			weaponHolder.notifyAmmoFinished();
 	}
 
 	public class Ammunition implements Drawable{
-	    public Scene.Location loc;
+	    public Scene.Location pixelPosition;
 	    public Direction dir;
 	    public BufferedImage bulletTexture;
-	    public Ammunition(Scene.Location loc,Direction dir,BufferedImage bulletTexture){
-	        this.loc = loc;
+
+	    public Ammunition(Scene.Location gridPosition,Direction dir,BufferedImage bulletTexture){
+	        this.pixelPosition = new Scene.Location(gridPosition.x*tileSize,
+				gridPosition.y*tileSize);
 	        this.dir = dir;
 	        this.bulletTexture = bulletTexture;
-
+			System.out.println(projectileSpeed);
 	    }
 	    /** default moves bullet in a straight path
 	    */
 	    public void update(){
 	        switch(dir){
 	            case LEFT:
-	                loc.x--;
+	                pixelPosition.x -= projectileSpeed;
 	                break;
 	            case RIGHT:
-	                loc.x++;
+	                pixelPosition.x += projectileSpeed;
 	                break;
 	            case UP:
-	                loc.y--;
+	                pixelPosition.y -= projectileSpeed;
 	                break;
 	            case DOWN:
-	                loc.y++;
+	                pixelPosition.y += projectileSpeed;
 	                break;
 	        }
 	    }
 
 	    public void draw(Graphics g){
-	        g.drawImage(bulletTexture,loc.x*tileSize,loc.y*tileSize,tileSize,tileSize,null);
+	        g.drawImage(bulletTexture,pixelPosition.x,pixelPosition.y,tileSize,tileSize,null);
 	    }
 
 	    public Scene.Location getGridPosition(){
-	        return new Scene.Location(loc.x,loc.y);
+	        return new Scene.Location(pixelPosition.x/tileSize,pixelPosition.y/tileSize);
 	    }
 
 	    public Type getType(){

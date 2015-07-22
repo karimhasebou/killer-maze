@@ -320,6 +320,9 @@ public class Scene extends JPanel{
 		return textures.get(texture);
 	}
 
+	public void gameOver(Graphics g){
+	}
+
 	final private static String MAP_TEXTURES = "MAP_TEXTURES";
 	final private static String MAP_OBJECTS = "MAP_OBJECTS";
 	final private static String GRID = "GRID";
@@ -329,4 +332,5 @@ public class Scene extends JPanel{
 	final private static String RPG = "RPG";
 	final private static String WALL_RANGE = "WALL_RANGE";
 	final private static String BACKGROUND_MUSIC = "BACKGROUND_MUSIC";
+	final private static String WINNING_POSITION = "WINNING_POSITION";
 }

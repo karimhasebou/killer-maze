@@ -38,4 +38,18 @@ class Player extends Character implements KeyListener{
     public void keyReleased(KeyEvent e) {
     }
 
+	@Override
+	public void notifyAmmoFinished(){
+		super.notifyAmmoFinished();
+		Console.println("Ammo finished");
+	}
+
+	@Override
+	public void fireWeapon(){
+		super.fireWeapon();
+		Weapon weapon = getWeapon();
+		if(weapon != null)
+			Console.println(weapon.getAmmoLeft()+" round (\'s\') left");
+	}
+
 }

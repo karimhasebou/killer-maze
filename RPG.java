@@ -8,10 +8,10 @@ import java.awt.*;
 import javax.imageio.*;
 
 class RPG extends Weapon{
-    private final static int DEFAULT_AMMO = 2;
+    private final static int DEFAULT_AMMO = 3;
     private final static String WEAPON_TEXTURE = "RPG_PICKUP";
     private final static String BULLET_TEXTURE = "ROCKET";
-    private final static int PROJECTILE_SPEED = 1;
+    private final static int PROJECTILE_SPEED = 8;
 
     public RPG(Scene scene,Scene.Location pickupLocation,boolean showAsPickup){
         super(scene,pickupLocation,showAsPickup);

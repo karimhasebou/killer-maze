@@ -163,16 +163,24 @@ public abstract class Character implements WeaponHolder{
 		}
 	}
 	public void setWeapon(Weapon weapon){
-		this.weapon = weapon;
+		if(this.weapon != null && weapon.getType() == this.weapon.getType()){
+				this.weapon.addAmmo(weapon.getAmmoLeft());
+				Console.println("Ammo increased to "+this.weapon.getAmmoLeft());
+		}else
+			this.weapon = weapon;
 	}
 
-	public void fireWeapon(){
+	protected void fireWeapon(){
 		if(weapon != null)
 			weapon.fire();
 	}
 
 	public void notifyAmmoFinished(){
 		weapon = null;
+	}
+
+	protected Weapon getWeapon(){
+		return weapon;
 	}
 
 	private final static int SPRITE_SIZE = 32;
