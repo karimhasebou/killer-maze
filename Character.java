@@ -49,7 +49,7 @@ public abstract class Character implements WeaponHolder{
 		return sprite;
 	}
 
-	protected void setGridPosition(Scene.Location loc){
+	public void setGridPosition(Scene.Location loc){
 		gridPosition = loc;
 	}
 
@@ -67,6 +67,11 @@ public abstract class Character implements WeaponHolder{
 
 	public void draw(Graphics g){
 		g.drawImage(sprite[spriteSelector],pixelPosition.x,pixelPosition.y,tileSize,tileSize,null);
+	}
+
+	public void moveTo(Scene.Location loc){
+		setGridPosition(loc);
+		setPixelPosition(new Scene.Location(loc.x*tileSize,loc.y*tileSize));
 	}
 
 	abstract public Type getType();

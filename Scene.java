@@ -40,6 +40,7 @@ public class Scene extends JPanel{
 
 		loadMap(map);
 		startGameLoop();
+		//MediaPlayer.playSong("sky.ogg");
 	}
 	/** reads map file and loads textures used
 	*/
@@ -70,6 +71,8 @@ public class Scene extends JPanel{
 					int y = Integer.parseInt(settings[2]);
 					Location loc = new Location(Integer.parseInt(settings[1]),Integer.parseInt(settings[2]));
 					drawables.add(new RPG(this,loc,true));
+				}else if(settings[0].equals(TELEPORT)){
+					addTeleport(settings);
 				}
 			}
 		}catch(IOException e){
@@ -162,6 +165,9 @@ public class Scene extends JPanel{
 		}
 		public boolean equals(Location other){
 			return x == other.x && y == other.y;
+		}
+		public Location clone(){
+			return new Location(x,y);
 		}
 	}
 
@@ -264,8 +270,10 @@ public class Scene extends JPanel{
 			weapon.showWeaponOnGrid(false);
 			weapon.setWeaponHolder(player);
 			player.setWeapon(weapon);
+		}else if(objectType == Drawable.Type.TELEPORT){
+			Teleport telelport = (Teleport) drawables.get(i);
+			telelport.teleport(player);
 		}
-
 	}
 	/**@return returns index of object player is in collision with, returns -1 if no collision is present
 	*/
@@ -323,11 +331,29 @@ public class Scene extends JPanel{
 	public void gameOver(Graphics g){
 	}
 
+	public void addTeleport(String[] settings){
+		int x1 = Integer.parseInt(settings[1]);
+		int y1 = Integer.parseInt(settings[2]);
+		int x2 = Integer.parseInt(settings[3]);
+		int y2 = Integer.parseInt(settings[4]);
+
+		Location loc1 = new Location(x1,y1);
+		Location loc2 = new Location(x2,y2);
+
+		Teleport portOne = new Teleport(textures.get(TELEPORT),loc1,this);
+		Teleport portTwo = new Teleport(textures.get(TELEPORT),loc2,this);
+		portOne.setOtherPort(portTwo);
+
+		drawables.add(portOne);
+		drawables.add(portTwo);
+	}
+
 	final private static String MAP_TEXTURES = "MAP_TEXTURES";
 	final private static String MAP_OBJECTS = "MAP_OBJECTS";
 	final private static String GRID = "GRID";
 	final private static String ENEMY = "ENEMY";
 	final private static String PLAYER = "PLAYER";
+	final private static String TELEPORT = "TELEPORT";
 	final private static String COIN = "COIN";
 	final private static String RPG = "RPG";
 	final private static String WALL_RANGE = "WALL_RANGE";
