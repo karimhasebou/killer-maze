@@ -10,10 +10,6 @@ class Player extends Character implements KeyListener{
 		super(sprite,gridPosition,scene,TRANSITION_SPEED);
 	}
 
-	public Type getType(){
-		return Type.PLAYER;
-	}
-
 	public void keyTyped(KeyEvent e) {
 
     }

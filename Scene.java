@@ -15,7 +15,6 @@ import puzzle2.Weapon.Ammunition;
 
 public class Scene extends JPanel{
 	private ArrayList<Drawable> drawables;
-	private ArrayList<Ammunition> weaponFire;
 
 	private HashMap<String,BufferedImage> textures;
 
@@ -32,7 +31,6 @@ public class Scene extends JPanel{
 		setFocusable(true);
 
 		drawables = new ArrayList<Drawable>();
-		weaponFire = new ArrayList<Ammunition>();
 		textures = new HashMap<String,BufferedImage>();
 
 		resolutionMultiplier = sceneShortestLength/500.0f;
@@ -126,6 +124,7 @@ public class Scene extends JPanel{
 			drawables.add(new Enemy(image,loc,this));
 		else if(sprite[0].equals(PLAYER)){
 			player = new Player(image,loc,this);
+			drawables.add(player);
 			addKeyListener(player);
 		}
 		else if(sprite[0].equals(COIN))
@@ -147,9 +146,6 @@ public class Scene extends JPanel{
 					x*tileSize,y*tileSize,tileSize,tileSize,null);
 		for(Drawable object : drawables)
 			object.draw(g);
-		for(Ammunition ammo : weaponFire)
-			ammo.draw(g);
-		player.draw(g);
 	}
 
 	public int getTileSize(){
@@ -178,11 +174,8 @@ public class Scene extends JPanel{
 					while(gameOn){
 						for(Drawable object : drawables)
 							object.update();
-						for(Ammunition bullet : weaponFire)
-							bullet.update();
 						player.update();
 						repaint();
-						actOnObjectInCollision();
 						checkCollisions();
 						Thread.sleep(32);
 					}
@@ -253,71 +246,78 @@ public class Scene extends JPanel{
 		return player.getGridPosition();
 	}
 
-	private void actOnObjectInCollision(){
-		int i = isObjectCollidingWithEnemy();
-
-		if(i == -1)
-			return;
-		Drawable.Type objectType = drawables.get(i).getType();
-
-		if(objectType == Drawable.Type.ENEMY)
-			gameOn = false;
-		else if(objectType == Drawable.Type.COIN)
-			drawables.remove(i);
-		else if(objectType == Drawable.Type.RPG){
-			@SuppressWarnings("unchecked")
-			Weapon weapon = (Weapon) drawables.get(i);
-			weapon.showWeaponOnGrid(false);
-			weapon.setWeaponHolder(player);
-			player.setWeapon(weapon);
-		}else if(objectType == Drawable.Type.TELEPORT){
-			Teleport telelport = (Teleport) drawables.get(i);
-			telelport.teleport(player);
-		}
-	}
-	/**@return returns index of object player is in collision with, returns -1 if no collision is present
-	*/
-	private int isObjectCollidingWithEnemy(){
-		Location playerLocation = player.getGridPosition();
-		for(int i = drawables.size()-1; i >= 0;i--)
-			if(drawables.get(i).getGridPosition().equals(playerLocation))
-				return i;
-		return -1;
-	}
-
 	public void addWeaponFire(Ammunition ammo){
-		weaponFire.add(ammo);
+		drawables.add(ammo);
 	}
 
 	public void checkCollisions(){
-	missle:	for(int i = 0; i < weaponFire.size();){
-			Location loc = weaponFire.get(i).getGridPosition();
-			if(loc.x < 0 || loc.x > xTileCount  || // missile out of bounds remove
-				loc.y < 0 || loc.y > yTileCount){
-				weaponFire.remove(i);
+		int i = 0,j = 1;
+		while(i < drawables.size()){
+			Drawable obj1 = drawables.get(i);
+			if(!isValidLocation(obj1.getGridPosition())){
+				drawables.remove(i);
 				continue;
-			}else if((grid[loc.y][loc.x] >= wallRange[0]
-				&& grid[loc.y][loc.x] <= wallRange[1])){
-				grid[loc.y][loc.x] = wallRange[1]+1;
-				weaponFire.remove(i);
-				continue;
-			}else if(player.getGridPosition().equals(loc)){
-				/*gameOn = false; // missile hit player
-				continue; */
 			}
-			for(int j = drawables.size()-1;j >= 0; j--){ // enemy - missile collision
-				Drawable obj = drawables.get(j);
-				if(obj.getType() != Drawable.Type.ENEMY)
-					continue;
-				Location enemyLoc = obj.getGridPosition();
-				if(enemyLoc.equals(loc)){
-					weaponFire.remove(i);
-					drawables.remove(j);
-					continue missle;
+			while(j < drawables.size()){
+				Drawable obj2 = drawables.get(j);
+				if(obj1.getGridPosition().equals(obj2.getGridPosition())){
+					if(actOnObjectsInCollision(obj1,obj2)){
+						j = i+1;
+						break;
+					}
 				}
+				j++;
 			}
-			i++;
+			j = ++i + 1;
 		}
+	}
+
+	public boolean isValidLocation(Location loc){
+		if(loc.x < 0 || loc.x >= xTileCount
+			|| loc.y < 0 || loc.y >= yTileCount)
+				return false;
+		return true;
+	}
+
+	public boolean actOnObjectsInCollision(Drawable dr1,Drawable dr2){
+		Drawable.Type obj1 = dr1.getType() ,obj2 = dr2.getType();
+		boolean removedObject = false;
+
+		/*if( (obj1 == Drawable.Type.PLAYER || obj1 == Drawable.Type.ENEMY) &&
+				(obj2 == Drawable.Type.PLAYER || obj2 == Drawable.Type.ENEMY)){
+				gameOn = false;
+				removedObject = true;
+		}else */if( (obj1 == Drawable.Type.CHARACTER || obj1 == Drawable.Type.BULLET) &&
+				(obj2 == Drawable.Type.BULLET || obj2 == Drawable.Type.CHARACTER)){
+				drawables.remove(dr1);
+				drawables.remove(dr2);
+				removedObject = true;
+		}else if((obj1 == Drawable.Type.CHARACTER || obj1 == Drawable.Type.TELEPORT) &&
+				(obj2 == Drawable.Type.CHARACTER || obj2 == Drawable.Type.TELEPORT)){
+				if(obj1 == Drawable.Type.TELEPORT){
+					Teleport telelport = (Teleport) dr1;
+					telelport.teleport((Character) dr2);
+				}else{
+					Teleport telelport = (Teleport) dr2;
+					telelport.teleport((Character) dr1);
+				}
+				removedObject = true;
+		}else if((obj1 == Drawable.Type.CHARACTER || obj1 == Drawable.Type.WEAPON) &&
+				(obj2 == Drawable.Type.CHARACTER || obj2 == Drawable.Type.WEAPON) && obj1 != obj2){
+				Character character;
+				Weapon weapon;
+				if(obj1 == Drawable.Type.CHARACTER){
+					character = (Character) dr1;
+					weapon = (Weapon) dr2;
+				}else{
+					character = (Character) dr2;
+					weapon = (Weapon) dr1;
+				}
+				weapon.showWeaponOnGrid(false);
+				weapon.setWeaponHolder(player);
+				character.setWeapon(weapon);
+		}
+		return removedObject;
 	}
 
 	public float getResolutionMultiplier(){

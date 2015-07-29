@@ -74,7 +74,9 @@ public abstract class Character implements WeaponHolder{
 		setPixelPosition(new Scene.Location(loc.x*tileSize,loc.y*tileSize));
 	}
 
-	abstract public Type getType();
+	public Type getType(){
+		return Type.CHARACTER;
+	}
 
 	public void update(){
 		isMoving = true;

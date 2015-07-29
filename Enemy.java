@@ -8,19 +8,15 @@ class Enemy extends Character{
 	private ArrayList<Scene.Location> pathToGoal;
 	private final static int SEARCH_RADIUS = 5;
 	private final static int TRANSITION_SPEED = 2;
-	
+
 	public Enemy(Image sprite,Scene.Location gridPosition,Scene scene){
 		super(sprite,gridPosition,scene,TRANSITION_SPEED);
-	}
-	
-	public Type getType(){
-		return Type.ENEMY;
 	}
 
 	public void update(){
 		super.update();
-		
-		if(isMoving()){	
+
+		if(isMoving()){
 			return;
 		}
 

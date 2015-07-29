@@ -60,7 +60,9 @@ abstract class Weapon implements Drawable{
 	public void update(){
 	}
 
-	abstract public Type getType();
+	public Type getType(){
+		return Drawable.Type.WEAPON;
+	}
 
 	public void fire(){
 		if(ammo <= 0)
@@ -70,7 +72,7 @@ abstract class Weapon implements Drawable{
 			weaponHolder.notifyAmmoFinished();
 	}
 
-	public class Ammunition implements Drawable{
+	class Ammunition implements Drawable{
 	    public Scene.Location pixelPosition;
 	    public Direction dir;
 	    public BufferedImage bulletTexture;
@@ -80,7 +82,6 @@ abstract class Weapon implements Drawable{
 				gridPosition.y*tileSize);
 	        this.dir = dir;
 	        this.bulletTexture = bulletTexture;
-			System.out.println(projectileSpeed);
 	    }
 	    /** default moves bullet in a straight path
 	    */
@@ -110,8 +111,8 @@ abstract class Weapon implements Drawable{
 	    }
 
 	    public Type getType(){
-	        return Type.STRAIGHT_BULLET;
-	    }
+			return Drawable.Type.BULLET;
+		}
 	}
 
 

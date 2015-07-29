@@ -22,8 +22,4 @@ class RPG extends Weapon{
         setWeaponProperties(weaponTexture,DEFAULT_AMMO);
         setBulletProperties(bulletTexture,PROJECTILE_SPEED);
     }
-
-    public Type getType(){
-        return Type.RPG;
-    }
 }
