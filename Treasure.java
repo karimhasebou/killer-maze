@@ -7,12 +7,13 @@ import javax.imageio.*;
 import java.util.*;
 import java.lang.*;
 
-class Coin extends Pickup{
-	public Coin(Image coin,Scene.Location loc,Scene scene){
-		super(coin,loc,scene);
+public class Treasure extends Pickup{
+
+    public Treasure(Image Treasure,Scene.Location loc,Scene scene){
+		super(Treasure,loc,scene);
 	}
 
 	public void pickedUp(){
-		
+        getScene().gameOver(true);
 	}
 }

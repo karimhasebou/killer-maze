@@ -82,6 +82,15 @@ abstract class Weapon implements Drawable{
 				gridPosition.y*tileSize);
 	        this.dir = dir;
 	        this.bulletTexture = bulletTexture;
+
+			if(dir == Direction.LEFT)
+				pixelPosition.x -= tileSize;
+			else if(dir ==  Direction.RIGHT)
+				pixelPosition.x += tileSize;
+			else if(dir ==  Direction.UP)
+				pixelPosition.y -= tileSize;
+			else
+				pixelPosition.y += tileSize;
 	    }
 	    /** default moves bullet in a straight path
 	    */

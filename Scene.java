@@ -71,6 +71,11 @@ public class Scene extends JPanel{
 					drawables.add(new RPG(this,loc,true));
 				}else if(settings[0].equals(TELEPORT)){
 					addTeleport(settings);
+				}else if(settings[0].equals(TREASURE)){
+					int x = Integer.parseInt(settings[1]);
+					int y = Integer.parseInt(settings[2]);
+					Location loc = new Location(Integer.parseInt(settings[1]),Integer.parseInt(settings[2]));
+					drawables.add(new Treasure(textures.get(TREASURE),loc,this));
 				}
 			}
 		}catch(IOException e){
@@ -316,6 +321,16 @@ public class Scene extends JPanel{
 				weapon.showWeaponOnGrid(false);
 				weapon.setWeaponHolder(player);
 				character.setWeapon(weapon);
+		}else if((obj1 == Drawable.Type.PICKUP || obj1 == Drawable.Type.CHARACTER) &&
+				(obj2 == Drawable.Type.PICKUP || obj2 == Drawable.Type.CHARACTER) && obj1 != obj2){
+				if(obj1 == Drawable.Type.PICKUP){
+					drawables.remove(dr1);
+					((Pickup)dr1).pickedUp();
+				}else{
+					drawables.remove(dr2);
+					((Pickup)dr2).pickedUp();
+				}
+				removedObject = true;
 		}
 		return removedObject;
 	}
@@ -328,7 +343,8 @@ public class Scene extends JPanel{
 		return textures.get(texture);
 	}
 
-	public void gameOver(Graphics g){
+	public void gameOver(boolean playerWon){
+		gameOn = false;
 	}
 
 	public void addTeleport(String[] settings){
@@ -358,5 +374,5 @@ public class Scene extends JPanel{
 	final private static String RPG = "RPG";
 	final private static String WALL_RANGE = "WALL_RANGE";
 	final private static String BACKGROUND_MUSIC = "BACKGROUND_MUSIC";
-	final private static String WINNING_POSITION = "WINNING_POSITION";
+	final private static String TREASURE = "TREASURE_CHEST";
 }
