@@ -72,7 +72,7 @@ abstract class Weapon implements Drawable{
 			weaponHolder.notifyAmmoFinished();
 	}
 
-	class Ammunition implements Drawable{
+	public class Ammunition implements Drawable{
 	    public Scene.Location pixelPosition;
 	    public Direction dir;
 	    public BufferedImage bulletTexture;

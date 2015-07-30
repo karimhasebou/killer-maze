@@ -65,13 +65,24 @@ public class Console extends JPanel implements KeyListener{
 		String[] formattedInput = input.split("\\s+");
 
 		if(formattedInput[0].equals(OPEN)){
-			int shortestSideLength = Math.min(window.getWidth()-getWidth(),getHeight());
+			int shortestSideLength = Math.min(window.getContentPane().getWidth()-getWidth(),getHeight());
 			Scene scene = new Scene(formattedInput[1],shortestSideLength);
 			window.putMainScreen(scene);
 			scene.requestFocus();
+		}else if(formattedInput[0].equals(MAP_CREATOR)){
+			if(formattedInput.length < 3){
+				System.out.println("Invalid args");
+				return;
+			}
+			int xTiles = Integer.parseInt(formattedInput[1]);
+			int yTiles = Integer.parseInt(formattedInput[2]);
+			MapCreator mapCreator = new MapCreator(xTiles,yTiles);
+			window.putMainScreen(mapCreator);
+			mapCreator.requestFocus();
 		}else
 			println("Invalid command");
 	}
 
 	private final static String OPEN = "open";
+	private final static String MAP_CREATOR =  "map_creator";
 }

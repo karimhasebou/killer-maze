@@ -10,7 +10,6 @@ import java.awt.*;
 import javax.sound.sampled.*;
 import java.io.*;
 import javax.imageio.*;
-import puzzle2.Weapon.Ammunition;
 
 
 public class Scene extends JPanel{
@@ -177,11 +176,10 @@ public class Scene extends JPanel{
 			public void run(){
 				try{
 					while(gameOn){
-						for(Drawable object : drawables)
-							object.update();
-						player.update();
 						repaint();
 						checkCollisions();
+						for(Drawable object : drawables)
+							object.update();
 						Thread.sleep(32);
 					}
 				}catch(InterruptedException e){
@@ -251,7 +249,7 @@ public class Scene extends JPanel{
 		return player.getGridPosition();
 	}
 
-	public void addWeaponFire(Ammunition ammo){
+	public void addWeaponFire(Weapon.Ammunition ammo){
 		drawables.add(ammo);
 	}
 
@@ -262,6 +260,15 @@ public class Scene extends JPanel{
 			if(!isValidLocation(obj1.getGridPosition())){
 				drawables.remove(i);
 				continue;
+			}else if(obj1.getType() == Drawable.Type.BULLET){
+				Location loc = obj1.getGridPosition();
+				if(grid[loc.y][loc.x] >= wallRange[0]
+					&& grid[loc.y][loc.x] <= wallRange[1]){
+					drawables.remove(i);
+					grid[loc.y][loc.x] = getClosestLandTile(loc);
+					Console.println("closest "+grid[loc.y][loc.x]);
+					continue;
+				}
 			}
 			while(j < drawables.size()){
 				Drawable obj2 = drawables.get(j);
@@ -364,6 +371,32 @@ public class Scene extends JPanel{
 		drawables.add(portTwo);
 	}
 
+	private int getClosestLandTile(Location loc){
+		int lowX = loc.x,lowY = loc.x,
+			highX = loc.y,highY = loc.y;
+
+		while(true){
+
+			lowX = lowX - 1 >= 0 ? lowX - 1 : lowX;
+			highX = highX+ 1 < xTileCount ?  highX + 1 : highX;
+
+			lowY = lowY - 1 >= 0 ? lowY - 1 : lowY;
+			highY = highY + 1 < yTileCount ?  highY + 1 : highY;
+
+			for(int tmp = lowX; tmp < highX;tmp++){
+				if(grid[lowY][tmp] < wallRange[0] || grid[lowY][tmp] > wallRange[1])
+					return grid[lowY][tmp];
+				if(grid[highY][tmp] < wallRange[0] || grid[highY][tmp] > wallRange[1])
+					return grid[highY][tmp];
+			}
+			for(int tmp = lowY; tmp < highY;tmp++){
+				if(grid[tmp][lowX] < wallRange[0] || grid[tmp][lowX] > wallRange[1])
+					return grid[tmp][lowX];
+				if(grid[tmp][highX] < wallRange[0] || grid[tmp][highX] > wallRange[1])
+					return grid[tmp][highX];
+			}
+		}
+	}
 	final private static String MAP_TEXTURES = "MAP_TEXTURES";
 	final private static String MAP_OBJECTS = "MAP_OBJECTS";
 	final private static String GRID = "GRID";
