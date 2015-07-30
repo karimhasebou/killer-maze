@@ -266,7 +266,6 @@ public class Scene extends JPanel{
 					&& grid[loc.y][loc.x] <= wallRange[1]){
 					drawables.remove(i);
 					grid[loc.y][loc.x] = getClosestLandTile(loc);
-					Console.println("closest "+grid[loc.y][loc.x]);
 					continue;
 				}
 			}
@@ -372,29 +371,30 @@ public class Scene extends JPanel{
 	}
 
 	private int getClosestLandTile(Location loc){
-		int lowX = loc.x,lowY = loc.x,
-			highX = loc.y,highY = loc.y;
+		int lowX = loc.x,lowY = loc.y,
+			highX = loc.x,highY = loc.y;
+
+			Console.println("org "+loc.x+"\t"+loc.y);
 
 		while(true){
-
-			lowX = lowX - 1 >= 0 ? lowX - 1 : lowX;
-			highX = highX+ 1 < xTileCount ?  highX + 1 : highX;
-
-			lowY = lowY - 1 >= 0 ? lowY - 1 : lowY;
-			highY = highY + 1 < yTileCount ?  highY + 1 : highY;
-
-			for(int tmp = lowX; tmp < highX;tmp++){
+			for(int tmp = lowX; tmp <= highX;tmp++){
 				if(grid[lowY][tmp] < wallRange[0] || grid[lowY][tmp] > wallRange[1])
 					return grid[lowY][tmp];
 				if(grid[highY][tmp] < wallRange[0] || grid[highY][tmp] > wallRange[1])
 					return grid[highY][tmp];
 			}
-			for(int tmp = lowY; tmp < highY;tmp++){
+			for(int tmp = lowY; tmp <= highY;tmp++){
 				if(grid[tmp][lowX] < wallRange[0] || grid[tmp][lowX] > wallRange[1])
 					return grid[tmp][lowX];
 				if(grid[tmp][highX] < wallRange[0] || grid[tmp][highX] > wallRange[1])
 					return grid[tmp][highX];
 			}
+
+			lowX = lowX - 1 >= 0 ? lowX - 1 : lowX;
+			highX = highX+ 1 < xTileCount ?  highX + 1 : highX;
+
+			lowY = lowY - 1 >=0  ? lowY - 1 : lowY;
+			highY = highY + 1 < yTileCount?  highY + 1 : highY;
 		}
 	}
 	final private static String MAP_TEXTURES = "MAP_TEXTURES";
